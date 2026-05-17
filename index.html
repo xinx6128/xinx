@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>登录商城系统</title>
+</head>
+
+<body class="relative overflow-hidden">
+
+<!-- ===== 全局背景（手机+电脑） ===== -->
+
+<!-- 电脑背景 -->
+<div class="hidden md:block fixed inset-0 bg-cover bg-center -z-10"
+  style="background-image: url('https://i.postimg.cc/wvzK6V2R/bg.jpg');">
+</div>
+
+<!-- 手机背景 -->
+<div class="block md:hidden fixed inset-0 bg-cover bg-center -z-10"
+  style="background-image: url('https://i.postimg.cc/fWrNdxTx/sou-tu-shen-qi-1774524583873.jpg');">
+</div>
+
+<!-- 黑色遮罩 -->
+<div class="fixed inset-0 bg-black/50 -z-10"></div>
+
+<!-- ===== 首页 ===== -->
+<div id="homePage" class="h-screen flex flex-col justify-center items-center text-white">
+
+  <h1 class="text-5xl font-bold mb-10 drop-shadow-lg">
+    我的商城
+  </h1>
+
+  <button onclick="showLogin()"
+    class="bg-white/20 backdrop-blur-md border border-white/30 px-10 py-3 rounded-2xl mb-4 w-60">
+    登录
+  </button>
+
+  <button onclick="showRegister()"
+    class="bg-blue-500/80 px-10 py-3 rounded-2xl w-60">
+    注册
+  </button>
+
+</div>
+
+<!-- ===== 登录页 ===== -->
+<div id="loginPage" class="hidden h-screen flex justify-center items-center text-white">
+
+  <div class="bg-white/10 backdrop-blur-md p-8 rounded-3xl w-80">
+
+    <h2 class="text-3xl font-bold text-center mb-6">登录</h2>
+
+    <input id="loginUser" placeholder="用户名"
+      class="w-full p-3 rounded-xl mb-4 text-black">
+
+    <input id="loginPass" type="password" placeholder="密码"
+      class="w-full p-3 rounded-xl mb-6 text-black">
+
+    <button onclick="login()"
+      class="w-full bg-black py-3 rounded-xl">
+      登录
+    </button>
+
+    <p id="loginError" class="text-red-400 text-center mt-4 hidden">
+      账号或密码错误
+    </p>
+
+  </div>
+
+</div>
+
+<!-- ===== 注册页 ===== -->
+<div id="registerPage" class="hidden h-screen flex justify-center items-center text-white">
+
+  <div class="bg-white/10 backdrop-blur-md p-8 rounded-3xl w-80">
+
+    <h2 class="text-3xl font-bold text-center mb-6">注册</h2>
+
+    <input id="regUser" placeholder="用户名"
+      class="w-full p-3 rounded-xl mb-3 text-black">
+
+    <input id="regEmail" placeholder="邮箱"
+      class="w-full p-3 rounded-xl mb-3 text-black">
+
+    <input id="regPass" type="password" placeholder="密码"
+      class="w-full p-3 rounded-xl mb-6 text-black">
+
+    <button onclick="register()"
+      class="w-full bg-blue-500 py-3 rounded-xl">
+      注册
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ===== 商城（普通用户） ===== -->
+<div id="shopPage" class="hidden text-white">
+
+  <div class="bg-black/40 p-4 text-xl font-bold">
+    用户商城
+  </div>
+
+  <div class="p-4">
+
+    <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4">
+
+      <img src="https://picsum.photos/400/200" class="rounded-2xl">
+
+      <h2 class="text-2xl mt-3 font-bold">iPhone 16 Pro</h2>
+
+      <p class="text-gray-200">超好看的商品</p>
+
+      <div class="flex justify-between mt-4">
+        <span class="text-red-400 text-2xl">￥8999</span>
+
+        <button class="bg-black px-4 py-2 rounded-xl">
+          购买
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ===== 管理员页面 ===== -->
+<div id="adminPage" class="hidden text-white">
+
+  <div class="bg-red-600 p-4 text-xl font-bold">
+    管理员后台
+  </div>
+
+  <div class="p-4">
+
+    <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl">
+
+      <h2 class="text-xl font-bold mb-4">商品管理</h2>
+
+      <button class="bg-green-500 px-4 py-2 rounded-xl mr-2">
+        添加商品
+      </button>
+
+      <button class="bg-red-500 px-4 py-2 rounded-xl">
+        删除商品
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let normalUser = "";
+let normalPass = "";
+let normalEmail = "";
+
+// 首页 → 登录
+function showLogin() {
+  hideAll();
+  document.getElementById("loginPage").classList.remove("hidden");
+}
+
+// 首页 → 注册
+function showRegister() {
+  hideAll();
+  document.getElementById("registerPage").classList.remove("hidden");
+}
+
+// 隐藏所有页面
+function hideAll() {
+  document.getElementById("homePage").classList.add("hidden");
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("registerPage").classList.add("hidden");
+  document.getElementById("shopPage").classList.add("hidden");
+  document.getElementById("adminPage").classList.add("hidden");
+}
+
+// 注册
+function register() {
+
+  let user = document.getElementById("regUser").value;
+  let email = document.getElementById("regEmail").value;
+  let pass = document.getElementById("regPass").value;
+
+  if (user.length < 5)
+    return alert("用户名必须大于5位");
+
+  if (!/^[A-Za-z0-9]+$/.test(user))
+    return alert("用户名只能英文数字");
+
+  if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email))
+    return alert("邮箱格式错误");
+
+  if (pass.length < 6 || !/[A-Za-z]/.test(pass))
+    return alert("密码必须6位以上且包含英文");
+
+  normalUser = user;
+  normalPass = pass;
+  normalEmail = email;
+
+  alert("注册成功，请登录");
+
+  hideAll();
+  document.getElementById("loginPage").classList.remove("hidden");
+}
+
+// 登录
+function login() {
+
+  let user = document.getElementById("loginUser").value;
+  let pass = document.getElementById("loginPass").value;
+
+  // 管理员
+  if (user === "admin" && pass === "123456") {
+    hideAll();
+    document.getElementById("adminPage").classList.remove("hidden");
+    return;
+  }
+
+  // 普通用户
+  if (user === normalUser && pass === normalPass) {
+    hideAll();
+    document.getElementById("shopPage").classList.remove("hidden");
+    return;
+  }
+
+  document.getElementById("loginError").classList.remove("hidden");
+}
+
+</script>
+
+</body>
+</html>
