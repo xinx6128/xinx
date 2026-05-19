@@ -11,7 +11,8 @@
 <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     
-    body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background-color: #1a2233; background-position: center; background-size: cover; background-repeat: no-repeat; background-image: url('1.png'); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background-color: #1a2233; background-position: center; background-size: cover; background-repeat: no-repeat; background-image: url('1.png');<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
     @media (min-width: 1024px) { body { background-image: url('2.png'); } }
     
     /* =========================================
@@ -133,6 +134,129 @@
         transform: translateY(1px);
         background-color: rgba(255, 255, 255, 0.7);
     }
+    /* =========================================
+       📱 保持原有结构：动态高度翻转伸缩 + 标题上移
+    ========================================= */
+    @media (max-width: 768px) {
+        /* 1. 卡片基础高度（登录页），并加入平滑变高的动画！ */
+        .card {
+            width: 90% !important;
+            max-width: 360px !important;
+            height: 290px !important; 
+            transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        /* 🌟 核心魔法：当翻转到注册或忘记密码时，卡片自动丝滑变长！ */
+        .card.flipped-reg {
+            height: 460px !important; /* 注册页框框自动伸长 */
+        }
+        .card.flipped-forgot {
+            height: 380px !important; /* 忘记密码页框框自动伸长 */
+        }
+
+        /* 2. 缩小顶部内边距，让整体内容靠上 */
+        .card-front, .card-back, .card-forgot {
+            flex-direction: column !important;
+            padding: 15px 20px 15px 20px !important; /* 顶部距离缩小到 15px */
+            align-items: flex-start !important;
+        }
+
+        .form-section {
+            flex: 1 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+
+        /* 3. 标题强制上移！ */
+        .title {
+            font-size: 22px !important;
+            margin-bottom: 15px !important; 
+            margin-top: -20px !important; /* 强行把标题往上推 */
+            text-align: left !important;
+        }
+        
+        .input-container {
+            margin-bottom: 15px !important; 
+            width: 65% !important; 
+        }
+        /* 注册和忘记密码页面的线条稍微长一点，方便填长邮箱 */
+        .card-back .input-container, .card-forgot .input-container {
+            width: 85% !important; 
+        }
+
+        .input-field {
+            font-size: 14px !important;
+            padding: 5px 5px 4px 0px !important;
+        }
+        .input-label {
+            font-size: 13px !important;
+            left: 0 !important;
+        }
+
+        /* 4. 底部按钮与文字排版保持单行 */
+        .action-group {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            margin-top: 10px !important; 
+        }
+        .action-group > div:first-child {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+        .link-text br { display: none !important; }
+        
+        #login-btn, #do-reg, #do-reset {
+            width: auto !important;
+            padding: 8px 16px !important; 
+            font-size: 14px !important;
+            border-radius: 10px !important;
+            white-space: nowrap !important;
+        }
+        .link-text {
+            font-size: 12px !important;
+            white-space: nowrap !important;
+            text-align: left !important;
+        }
+        .link-text span {
+            font-size: 13px !important;
+            margin-left: 3px !important;
+        }
+        #go-forgot-btn {
+            margin-left: auto !important; 
+            position: relative;
+            z-index: 20 !important;
+        }
+
+        /* 5. 猫娘控制区 */
+        .character-section {
+            position: absolute !important;
+            right: -5px !important; 
+            top: 35% !important;     
+            transform: translateY(-50%) !important; 
+            width: 130px !important; 
+            height: 130px !important; 
+            pointer-events: none !important; 
+            z-index: 5 !important;
+        }
+        .card-front #char2-login, .card-front #char3-login,
+        .card-back #char2-reg, .card-back #char3-reg,
+        .card-forgot #char2-forgot, .card-forgot #char3-forgot {
+            height: 155% !important; 
+            width: auto !important;
+            max-width: none !important;
+            right: 0 !important;
+            bottom: -25px !important; 
+        }
+    }
+
+
 </style>
 </head>
 <body>
