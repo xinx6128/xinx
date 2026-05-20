@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>三维矩阵动态全栈系统</title>
+<title>账号登录</title>
 <!-- 引入 Supabase 核心脚本 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- 引入免责声明 UI 需要的 Tailwind CSS -->
@@ -135,10 +135,11 @@
         background-color: rgba(255, 255, 255, 0.7);
     }
     /* =========================================
-       📱 保持原有结构：动态高度翻转伸缩 + 标题上移
+           /* =========================================
+       📱 保持原有结构：动态高度翻转伸缩 + 底部文字完美下移
     ========================================= */
     @media (max-width: 768px) {
-        /* 1. 卡片基础高度（登录页），并加入平滑变高的动画！ */
+        /* 1. 卡片基础高度与平滑伸缩动画 */
         .card {
             width: 90% !important;
             max-width: 360px !important;
@@ -146,18 +147,17 @@
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
-        /* 🌟 核心魔法：当翻转到注册或忘记密码时，卡片自动丝滑变长！ */
         .card.flipped-reg {
-            height: 460px !important; /* 注册页框框自动伸长 */
+            height: 460px !important; 
         }
         .card.flipped-forgot {
-            height: 380px !important; /* 忘记密码页框框自动伸长 */
+            height: 380px !important; 
         }
 
-        /* 2. 缩小顶部内边距，让整体内容靠上 */
+        /* 2. 内部结构与边距 */
         .card-front, .card-back, .card-forgot {
             flex-direction: column !important;
-            padding: 15px 20px 15px 20px !important; /* 顶部距离缩小到 15px */
+            padding: 15px 20px 15px 20px !important; 
             align-items: flex-start !important;
         }
 
@@ -169,11 +169,11 @@
             z-index: 10 !important;
         }
 
-        /* 3. 标题强制上移！ */
+        /* 3. 标题与输入框 */
         .title {
             font-size: 22px !important;
             margin-bottom: 15px !important; 
-            margin-top: -20px !important; /* 强行把标题往上推 */
+            margin-top: -5px !important; 
             text-align: left !important;
         }
         
@@ -181,7 +181,6 @@
             margin-bottom: 15px !important; 
             width: 65% !important; 
         }
-        /* 注册和忘记密码页面的线条稍微长一点，方便填长邮箱 */
         .card-back .input-container, .card-forgot .input-container {
             width: 85% !important; 
         }
@@ -195,14 +194,14 @@
             left: 0 !important;
         }
 
-        /* 4. 底部按钮与文字排版保持单行 */
+        /* 4. 🌟 核心修改：底部按钮与文字往下沉！ */
         .action-group {
             width: 100% !important;
             display: flex !important;
             flex-direction: row !important;
             align-items: center !important;
             justify-content: flex-start !important;
-            margin-top: 10px !important; 
+            margin-top: 28px !important; /* 🌟 魔法在这里：从原来的 10px 改成了 28px，正好推到中间位置！ */
         }
         .action-group > div:first-child {
             display: flex !important;
@@ -576,6 +575,84 @@ document.getElementById('do-reset').onclick = async function() {
 
     if (updateError) { alert('修改失败：' + updateError.message); } 
     else { alert('密码重置成功！为您翻转回登录页。'); backToLogin(); }
+}
+// =========================================
+// 7. 新账号注册写入数据库逻辑 (加强验证版)
+// =========================================
+document.getElementById('do-reg').onclick = async function() {
+    const acc = document.getElementById('reg-acc').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pwd1 = document.getElementById('reg-pwd').value.trim();
+    const pwd2 = document.getElementById('reg-pwd2').value.trim();
+    
+    // 1. 判空拦截
+    if(!acc || !email || !pwd1 || !pwd2){ alert('请将注册信息填写完整！'); return; }
+
+    // 2. 用户名严密验证
+    if (acc.length < 5 || acc.length > 18) { 
+        alert('用户名长度必须在 5 到 18 个字符之间！'); 
+        return; 
+    }
+    if (/[\u4e00-\u9fa5]/.test(acc)) { 
+        alert('用户名不能包含中文！'); 
+        return; 
+    }
+    // 额外加上只能是字母和数字的校验，防止输入特殊符号
+    if (!/^[a-zA-Z0-9]+$/.test(acc)) { 
+        alert('用户名只能包含英文字母和数字！'); 
+        return; 
+    }
+
+    // 3. 电子邮箱格式验证
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) { 
+        alert('请输入正确的电子邮箱格式！(例如: xxx@qq.com)'); 
+        return; 
+    }
+
+    // 4. 密码安全验证
+    if (pwd1.length < 6) { 
+        alert('密码太短，最少需要 6 个字符！'); 
+        return; 
+    }
+    if (!/[a-zA-Z]/.test(pwd1)) { 
+        alert('密码必须包含至少一个英文字母！'); 
+        return; 
+    }
+    if (/[\u4e00-\u9fa5]/.test(pwd1)) { 
+        alert('密码不能包含中文！'); 
+        return; 
+    }
+    if (pwd1 !== pwd2) { 
+        alert('两次输入的密码不一致，请重新确认！'); 
+        return; 
+    }
+
+    // 验证全数通过，显示加载动画
+    showLoading(); 
+    
+    // 5. 检查用户名是否已被别人注册
+    const { data: existData, error: existError } = await supabaseClient.from('users').select('*').eq('acc', acc);
+    if (existData && existData.length > 0) { 
+        hideLoading(); 
+        alert('抱歉，该用户名已被注册，请换一个试试！'); 
+        return; 
+    }
+
+    // 6. 将新账号数据安全写入 Supabase 数据库
+    const { error: insertError } = await supabaseClient.from('users').insert([
+        { acc: acc, email: email, pwd: pwd1 }
+    ]);
+    
+    hideLoading(); 
+
+    // 7. 结果反馈
+    if (insertError) { 
+        alert('注册失败：' + insertError.message); 
+    } else { 
+        alert('🎉 注册成功！为您翻转回登录页，请登录。'); 
+        backToLogin(); // 自动炫酷地翻转回正面
+    }
 }
 </script>
 </body>
